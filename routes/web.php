@@ -17,8 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'EncuestaController@index')->name('index');
+Route::get('/home', 'EncuestaController@index')->name('home');
+Route::get('/encuestas', 'EncuestaController@index')->name('encuestas.index');
+Route::get('/encuestas/{id_encuesta}', 'EncuestaController@show')->name('encuestas.show');

@@ -4,9 +4,16 @@
 <style>
 .efecto:hover .imagen {-webkit-transform:scale(1.3);transform:scale(1.3);transition-duration: 500ms;}
 .efecto {overflow:hidden;}
+@media (max-width: 768px) {
+    .mifuente {
+        font-size: 30px;
+    }
+}
 </style>
 <div class="container">
-    <h1 class="text-center display-3 my-4 animated bounce">Encuestas</h1>
+<a href="{{route('encuestas')}}" class="btn btn-primary float-right animated bounce "><i class="fas fa-arrow-left mr-2"></i>Regresar</a>
+    <br>
+    <h1 class="text-center display-3 my-4 animated bounce mifuente">{{$texto->texto}}</h1>
     <div class="card-columns animated bounce">
         @foreach ($encuestas as $e)
         <div class="card" >
@@ -19,7 +26,7 @@
             <div class="card-body animated rubberBand">
                 @foreach ($e->informacion as $i)
                 <h5 class="card-title text-center">{{$i->titulo}}</h5>
-                <p class="card-text text-justify">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text text-justify">{{$e->texto}}</p>
                         {{-- modal para ver detalle de la encuesta --}}
                 
                 
@@ -44,7 +51,7 @@
                             <p>Valido Hasta: <b>{{$i->fecha_vencimiento}}</b></p>
                             <p>Total de Registros: <b>{{$i->cuenta}}</b></p>
                             <div class=" d-flex justify-content-center">
-                                <a href="{{route('encuestas.show',$e->id_encuesta)}}" class="btn btn-success mr-2"><i class="fa fa-sign-in mr-2" aria-hidden="true"></i>Ingresar</a>
+                                <a href="{{route('encuestas.show',[$id_encuesta_grupo_im,$e->id_encuesta])}}" class="btn btn-success mr-2"><i class="fa fa-sign-in mr-2" aria-hidden="true"></i>Ingresar</a>
                                 <button type="button" class="btn btn-danger ml-2" data-dismiss="modal"><i class="fa fa-times mr-2" aria-hidden="true"></i>Cancelar</button>
                             </div>
                         </div>

@@ -17,7 +17,17 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/', 'EncuestaController@index')->name('index');
-Route::get('/home', 'EncuestaController@index')->name('home');
-Route::get('/encuestas', 'EncuestaController@index')->name('encuestas.index');
-Route::get('/encuestas/{id_encuesta}', 'EncuestaController@show')->name('encuestas.show');
+Route::get('/', 'EncuestaController@grupoindex')->name('index');
+Route::get('/home', 'EncuestaController@grupoindex')->name('home');
+Route::get('/encuestas', 'EncuestaController@grupoindex')->name('encuestas');
+
+Route::get('/encuestas/{id}', 'EncuestaController@index')->name('encuestas.index');
+Route::get('/encuestas/{id}/{id_encuesta}', 'EncuestaController@show')->name('encuestas.show');
+Route::get('/encuestaStore','EncuestaController@store')->name('store.ajax');
+Route::post('/guardarfoto', 'EncuestaController@guardarFoto')->name('guardarfoto.ajax');
+/* administracion */
+Route::get('/administracion','AdminController@index')->name('admin.index');
+Route::get('/listaEncuestas','AdminController@listaEncuestas')->name('encuestas.admin');
+Route::get('/listaEncuestas/{id}','AdminController@show')->name('encuestas.show.admin');
+
+

@@ -63,21 +63,21 @@ class EncuestaController extends Controller
             /* agrego la informacion de la encuesta */
             $encuestas[$i]->informacion=$informacion;
         }
-
+        
         return view('encuestas.index',compact('encuestas','id_encuesta_grupo_im',"texto"));
     }
-    public function show($id_encuesta)
+    public function show($id_grupo_encuesta,$id_encuesta)
     {
         $encuesta= Encuesta::findOrFail($id_encuesta);
         $preguntas=DB::table('encuesta_im_detalle')
-        ->selectraw('id as id_encuesta_im_detalle,id_tipo,titulo,enunciado')
+        ->selectraw('id as id_encuesta_im_detalle,id_tipo,titulo,enunciado,texto_ayuda')
         ->where('id_encuesta_im',$id_encuesta)
         ->orderby('orden','asc')
         ->get();
         for ($i=0; $i < count($preguntas); $i++) { 
             if ($preguntas[$i]->id_tipo==4) {
                 $textos=DB::table('encuesta_im_detalle_item')
-                ->selectraw('texto')
+                ->selectraw('id_encuesta_im_detalle,texto')
                 ->where('id_encuesta_im_detalle',$preguntas[$i]->id_encuesta_im_detalle)
                 ->orderby('orden','asc')
                 ->get();
@@ -88,32 +88,23 @@ class EncuestaController extends Controller
         for ($i=0; $i < count($preguntas); $i++) { 
             if ($preguntas[$i]->id_tipo==3) {
                 $imagenes=DB::table('encuesta_im_detalle_item')
-                ->selectraw('imagen')
+                ->selectraw('id_encuesta_im_detalle,imagen')
                 ->where('id_encuesta_im_detalle',$preguntas[$i]->id_encuesta_im_detalle)
                 ->orderby('orden','asc')
                 ->get();
                 $preguntas[$i]->imagenes=$imagenes;
             }
-            
         }
-        /* $imagenes=DB::table('encuesta_im_detalle_item')
-        ->selectraw('imagen')
-        ->where('id_encuesta_im_detalle',$id_encuesta)
-        ->orderby('orden','asc')
-        ->get(); */
-        /* $textos=DB::table('encuesta_im_detalle_item')
-        ->selectraw('texto')
-        ->where('id_encuesta_im_detalle',$id_encuesta)
-        ->orderby('orden','asc')
-        ->get(); */
-        
-       
+
         $radiocount=1;
         $count=1;
         $radiocount2=1;
         $count2=1;
+        $id_empleado=Auth::user()->id_empleado;
+        $fecha_hora=Carbon::now();
+
         return view('encuestas.show',compact('encuesta','preguntas','imagenes','textos','radiocount','count'
-        ,'radiocount2','count2','id_encuesta'));
+        ,'radiocount2','count2','id_encuesta','id_empleado',"fecha_hora"));
     }
     public function store(Request $request)
     {
@@ -126,16 +117,18 @@ class EncuestaController extends Controller
             $longitud = $request['p']['longitud'];    
             $latitud = $request['p']['latitud'];    
             $respuestas = $request['p']['respuestas'];
+            $fecha_hora = $request['p']['fecha_hora'];
             json_encode($respuestas,true);
 
             $encuesta_im_respuesta=new Encuesta_im_respuesta();
             $encuesta_im_respuesta->id_encuesta_im=$id_encuesta;
             $encuesta_im_respuesta->id_empleado=Auth::user()->id_empleado;
             $encuesta_im_respuesta->ean=$ean;
-            $encuesta_im_respuesta->ruta_foto=$url. '/photos' . '/' . $ruta_foto;
+            $encuesta_im_respuesta->ruta_foto=$url. '/public_html/encuesta_im' . '/' . $ruta_foto;
             $encuesta_im_respuesta->enabled='true';
             $encuesta_im_respuesta->longitud=$longitud;
             $encuesta_im_respuesta->latitud=$latitud;
+            $encuesta_im_respuesta->inititated_at=$fecha_hora;
             $encuesta_im_respuesta->created_at=Carbon::now();
             $encuesta_im_respuesta->updated_at=Carbon::now();
             $encuesta_im_respuesta->save();
@@ -176,10 +169,12 @@ class EncuestaController extends Controller
         if ($request->ajax()) {
             if ($request->file('foto')) {
                 $file = $request->file('foto');
+                $id_encuesta = $request->id_encuesta;
+                $id_empleado = Auth::user()->id_empleado;
                 $formato = substr($file->getClientOriginalName(), -3);
                 if (strtolower($formato) == "jpg" || strtolower($formato) == "png") {
-                    $name = md5($file->getClientOriginalName()) . '.' . $formato;
-                    $file->move(public_path() . '/photos', $name);
+                    $name = "000000" . $id_empleado ."_"."000000".$id_encuesta.".". $formato;
+                    $file->move(public_path() . '/public_html/encuesta_im/', $name);
                     return response()->json($name);
                 } else {
                     return response()->json("No puede este tipo de archivos" . $file->getClientOriginalName());

@@ -9,13 +9,30 @@
                   width: 100%;
               }
           }
+    .textfile {
+    font-size: 15px;
+    }
+    @media only screen and (max-width: 768px) {
+        .textfile {
+            font-size: 10px;
+        }
+    }
+    .cambiodealtura {
+            height: 400px;
+        }
+    @media only screen and (max-width: 768px) {
+        .cambiodealtura {
+            height: 200px;
+        }
+    }
   </style>
 
     <div class='wrapper animated bounce' style="width: 95%; margin: 0 auto;">
+    <input type="hidden" id="fecha_hora" value="{{$fecha_hora}}">
         <div class="question">
             <h2 class="text-center">{{$encuesta->titulo}}</h2> 
-            <div class="text-center">
-            <img src="{{$encuesta->imagen}}" alt="encuenta.img" style="width: 80%; height: 400px; border-radius: 5%;">
+            <div class="text-center cambiodealtura">
+            <img src="{{$encuesta->imagen}}" alt="encuenta.img" style="width: 80%; border-radius: 5%;">
             </div>
             <div class="text-center my-4">
                 <button type="button" class='btn-check animated infinite pulse delay-2s' onclick="next()"><i class="fas fa-play-circle mr-2"></i>Iniciar</button>
@@ -30,8 +47,8 @@
                 <div id="interactive" class="viewport"></div>
           <div id="result_strip">
             <ul class="thumbnails"></ul>
-            <p id="informacion" class="text-secondary"></p>
-            <p id="informacion2" class="text-secondary"></p>
+            <p id="informacion" class="text-secondary textfile"></p>
+            <p id="informacion2" class="text-secondary textfile"></p>
             <button type='button' id="aqui" class='text-info d-none' style='text-decoration: none;'>Aqui</button>
             <input type="text" class="form-control d-none" placeholder="Example: ABC-abc-1234" id="cean">
             <ul class="collector"></ul>
@@ -126,21 +143,21 @@
                         @csrf
                         <div class="text-center">
                             <label for="foto">
-                            <input type="file" name="foto" id="input_foto" style="font-size: 15px;">
+                            <input type="hidden" id="id_encuesta2" value="{{$id_empleado}}">
+                            <input type="file" name="foto" id="input_foto" class="textfile">
                             </label>
-                            <a class="btn btn-primary text-white" onclick="subirfoto()">Subir foto</a>
+                            <a class="btn btn-primary text-white textfile" onclick="subirfoto()"><i class="fas fa-upload mr-2"></i>Subir foto</a>
                         </div>
                     </form>
-                  <br>
                   <br>
                     {{-- captura de fotos --}}
                   <div class="text-center">
                        <div class="d-flex justify-content-center">
                         <select name="listaDeDispositivos" id="listaDeDispositivos" class="form-control"></select>
-                        <a id="boton" class="btn btn-primary ml-5 text-white"><i class="fas fa-camera-retro"></i></a>
+                        <a id="boton" class="btn btn-primary ml-3 text-white"><i class="fas fa-camera-retro"></i></a>
                        </div>  
                       <p id="estado"></p>
-                      <br>
+                    <p><b>{{$encuesta->texto_foto}}</b></p>
                         <video muted="muted" id="video"></video>
                         <canvas id="canvas" style="display: none;"></canvas>
                   </div>
@@ -164,6 +181,7 @@
                 <p class="my-2 h5">{{$pre->enunciado}}</p>
                 <div class='question-answers'>
                   <textarea name="textarea" id="" class="form-control"></textarea>
+                  <p class="my-2 h6 text-muted text-center">{{$pre->texto_ayuda}}</p>
                 </div>
                 <div class="text-center my-4">
                     <button type="button" class='btn-check bg-danger mr-2' onclick="previus()"><i class="fas fa-arrow-circle-right fa-rotate-180 mr-2"></i><small>Back</small></button>
@@ -186,6 +204,7 @@
                         <input type="number" name="enteros" class="form-control">
                         </div>
                     </div>
+                    <p class="my-2 h6 text-muted text-center">{{$pre->texto_ayuda}}</p>
                 </div>
                 <div class="text-center my-4">
                     <button type="button" class='btn-check bg-danger mr-2' onclick="previus()"><i class="fas fa-arrow-circle-right fa-rotate-180 mr-2"></i><small>Back</small></button>
@@ -233,13 +252,15 @@
                                 <input class="radiocuento" type="radio" name="rb{{$radiocount}}"  value="{{$count}}"/>
                                 </td>
                                 @php $count++; @endphp   
-                            @endif
-                            
-                        @endforeach
-                        @php $radiocount++; @endphp
+                                @endif
+                                
+                                @endforeach
+                                @php $radiocount++; @endphp
+                                @php $count=1; @endphp   
                       </tr>
                     </thead>
-                  </table>
+                    </table>
+                    <p class="my-2 h6 text-muted text-center">{{$pre->texto_ayuda}}</p>
                 </div>
                 <div class="text-center my-4">
                     <button type="button" class='btn-check bg-danger mr-2' onclick="previus()"><i class="fas fa-arrow-circle-right fa-rotate-180 mr-2"></i><small>Back</small></button>
@@ -254,34 +275,21 @@
                     {{$pre->titulo}}
                     </div>
                     <div class='question-answers' style="overflow-x:auto;">
-                        <table class="table table-bordered text-center" id="listado" width="100%;" style="font-size: 14px; height: 100px; max-height: 100px !important;">
-                        <thead>
-                        <tr id="titulotable" style="background-color: #01224b !important; color: #fff !important;">
-                            <th class="text-center" style="min-width: 150px"><p>Pregunta</p></th>
-                            @foreach ($pre->textos as $text)
-                                @if ($text->texto!='')
-                                    <th class="text-center">
-                                        <p>{{$text->texto}}</p>
-                                    </th>
-                                @endif
-                            @endforeach
-                        </tr>
-                        <tr>
-                            <td style="min-width: 150px" class="text-center">
-                            {{$pre->enunciado}}
-                            </td>
+                            <p class="text-center">
+                            <b>{{$pre->enunciado}}</b>
+                            </p>
                             @foreach ($pre->textos as $t)
                                 @if ($t->texto!='')
-                                <td class="text-center">
-                                <input class="radiocuento" type="radio" name="rt{{$radiocount2}}" value="{{$count2}}"/>
-                                </td>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                      <input type="radio" class="form-check-input" name="rt{{$radiocount2}}" value="{{$count2}}">{{$t->texto}}</label>
+                                </div>
                                 @php $count2++; @endphp   
-                                @endif
+                                @endif                                
                             @endforeach
-                            @php $radiocount2++; @endphp   
-                        </tr>
-                        </thead>
-                    </table>
+                                @php $radiocount2++; @endphp   
+                                @php $count2=1; @endphp   
+                        <p class="my-2 h6 text-muted text-center">{{$pre->texto_ayuda}}</p>
                     </div>
                     <div class="text-center my-4">
                         <button type="button" class='btn-check bg-danger mr-2' onclick="previus()"><i class="fas fa-arrow-circle-right fa-rotate-180 mr-2"></i><small>Back</small></button>
@@ -289,16 +297,17 @@
                     </div>
                 </div>
             @endif
-        @endforeach
+            @endforeach
+  
         {{-- felicitaciones --}}
         <div class='question d-none'>
             <div class='question-headline text-center'>
               ¡Felicitaciones ya ha terminado nuestra encuesta¡
             </div>
-            <div class='question-answers'>
+            <div class='question-answers cambiodealtura'>
                 <div class="text-center">
                     <img src="https://image.freepik.com/vector-gratis/felicitaciones-tipografia-letras-manuscritas-tarjeta-felicitacion-banner_7081-766.jpg" 
-                    alt="encuenta.img" style="width: 80%; height: 400px; border-radius: 5%;">
+                    alt="encuenta.img" style="width: 80%;border-radius: 5%;">
                 </div>
             </div>
             <div class="text-center my-4">
@@ -312,7 +321,7 @@
  {{-- modal help nota1: no agregara animaciones al modal--}} 
  <div class="modal fade" id="helpmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
+      <div class="modal-content" style="border-radius: 5%;">
         <div class="modal-header">
           <h5 class="modal-title text-center" id="exampleModalLabel">¿Como escanear un codigo de barras?</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -336,7 +345,7 @@
   <!-- Modal -->
   <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
+      <div class="modal-content" style="border-radius: 5%;">
         <div class="modal-header">
           <h5 class="modal-title text-center" id="exampleModalLabel">Informacion</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -345,7 +354,7 @@
         </div>
         <div class="modal-body">
           <p id="info_final" class="text-center"></p>
-          <img src="" id="img_subida" style="width: 100%" height="400px;" class="">
+          <img src="" id="img_subida" style="width: 100%" class="cambiodealtura">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
@@ -355,33 +364,26 @@
   </div>
 @push('scripts')
         <script>
-            
+
             function ObtenerRespuestas() {
                 var inputs = $('[name="enteros"]').map(function(){return this.value;}).get();
                 var textareas = $('[name="textarea"]').map(function(){return this.value;}).get();
-                
                 var rb_e =[];
                 var rb_t=[];
+                var porNombre=document.getElementsByName("rt1")[0].checked;
+
                 for (let index = 1; index < {{$radiocount}}; index++) {
-                    if (index>1) {
-                    rb_e.push($('input:radio[name=rb'+index+']:checked').map(function(){return parseInt(this.value-{{$radiocount}});}).get());
-                    }else{
                     rb_e.push($('input:radio[name=rb'+index+']:checked').map(function(){return parseInt(this.value);}).get());
-                    }
                 }
                 for (let index = 1; index < {{$radiocount2}}; index++) {
-                    if (index>1) {
-                    rb_t.push($('input:radio[name=rt'+index+']:checked').map(function(){return parseInt(this.value-{{$radiocount2}});}).get());
-                    }else{
                     rb_t.push($('input:radio[name=rt'+index+']:checked').map(function(){return parseInt(this.value);}).get());
-                    }
                 }
+                
                 var respuestas = new Object();
                 respuestas.textos=textareas;
                 respuestas.enteros=inputs;
                 respuestas.rb_emoticones=rb_e;
                 respuestas.rb_textos=rb_t;
-                
                 return respuestas;
                 
             }
@@ -724,7 +726,7 @@
                         counts++;
                         let codigo=code.length;
                         if ( codigo > 12) {
-                            $("#informacion").text("El código ingresa cumple con los estandares de un codigo EAN de 13 digitos. Si es correcto pulse Grabar");
+                            $("#informacion").text("El código ingresa cumple con los estandares de un codigo EAN de 13 digitos. Si es correcto pulse Guardar");
                         }
                         if (counts>2) {
                             $("#informacion2").text("Si tiene problemas enfoncando el codigo puede ingresarlo manualmente haciendo click");
@@ -874,10 +876,11 @@
                                 contexto.drawImage($video, 0, 0, $canvas.width, $canvas.height);
 
                                 let foto = $canvas.toDataURL(); //Esta es la foto, en base 64
+                                
                                 $estado.innerHTML = "Enviando foto. Por favor, espera...";
                                 fetch("/guardar_foto.php", {
                                         method: "POST",
-                                        body: encodeURIComponent(foto),
+                                        body: encodeURIComponent(foto)+"&{{$id_encuesta}}"+"&{{$id_empleado}}",
                                         headers: {
                                             "Content-type": "application/x-www-form-urlencoded",
                                         }
@@ -893,9 +896,11 @@
                                         let urlfoto=nombreDeLaFoto;/* guardo nombre de la foto */
                                         $("#urlfoto").val(nombreDeLaFoto);
                                         /*  subirFotoCapturada(nombreDeLaFoto); */
-                                        $estado.innerHTML = `Foto guardada con éxito. Puedes verla <a target='_blank' href='{{Request::root()}}/photos/${nombreDeLaFoto}'> aquí</a>`;
+                                        $estado.innerHTML = `Foto guardada con éxito. Puedes verla <a target='_blank' href='{{Request::root()}}/public_html/encuesta_im/${nombreDeLaFoto}'> aquí</a>`;
                                         $("#info_final").text("Foto "+nombreDeLaFoto+" subida correctamente")
-                                        $("#img_subida").attr("src","{{Request::root()}}/photos/"+nombreDeLaFoto);
+                                        var img=document.getElementById("img_subida");
+                                        img.src="{{Request::root()}}/public_html/encuesta_im/"+nombreDeLaFoto+"?"+Math.random();
+                                        /* img.src="{{Request::root()}}/public_html/encuesta_im/"+nombreDeLaFoto; */
                                         $("#abrimodal2").click();
                                     })  
 
@@ -913,7 +918,9 @@
         {{-- ajax para las fotos --}}
         <script>
             function subirfoto() {
+                let id_encuesta2=$("#id_encuesta2").val();
                 var parametros= new FormData($("#form_fotos")[0]);
+                parametros.append("id_encuesta",id_encuesta2);
                 console.log(parametros);
                 $.ajax({
                 data: parametros,
@@ -927,10 +934,10 @@
                     $("#urlfoto").val(response);
                     $("#input_foto").val("");
                     $("#info_final").text("Foto "+response+" subida correctamente")
-                    $("#img_subida").attr("src","{{Request::root()}}/photos/"+response);
+                    $("#img_subida").attr("src","{{Request::root()}}/public_html/encuesta_im/"+response+"?"+Math.random());
                     $("#abrimodal2").click();
                     
-                    $estado.innerHTML = `Foto Subida con éxito. Puedes verla <a target='_blank' href='{{Request::root()}}/photos/${response}'> aquí</a>`;
+                    $estado.innerHTML = `Foto Subida con éxito. Puedes verla <a target='_blank' href='{{Request::root()}}/public_html/encuesta_im/${response}'> aquí</a>`;
                 }
                 });
             }
@@ -943,6 +950,7 @@
             let ruta_foto= $("#urlfoto").val();
             let longitud=  $("#longitud").val();  
             let latitud=  $("#latitud").val();
+            let fecha_hora=  $("#fecha_hora").val();
             let respuestas= JSON.stringify(ObtenerRespuestas());  
             var p={
                 "id_encuesta_im" : id,
@@ -951,6 +959,7 @@
                 "longitud" :longitud,
                 "latitud" :latitud,
                 "respuestas" :respuestas,
+                "fecha_hora" :fecha_hora,
                 
             };
             $.get('{{route('store.ajax')}}',{p:p},function(responseArray){

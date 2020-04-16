@@ -28,10 +28,7 @@
                 <h5 class="card-title text-center">{{$i->titulo}}</h5>
                 <p class="card-text text-justify">{{$e->texto}}</p>
                         {{-- modal para ver detalle de la encuesta --}}
-                
-                
                 @endforeach
-              
             </div>
         </div>
         

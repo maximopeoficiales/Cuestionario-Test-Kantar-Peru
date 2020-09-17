@@ -132,14 +132,14 @@ class EncuestaController extends Controller
         $url = $request->root();
         if ($request->ajax()) {
             json_decode($request, true);
-            $id_encuesta = $request['p']['id_encuesta_im'];
-            $ean = $request['p']['ean'];
-            $ruta_foto = $request['p']['ruta_foto'];
-            $longitud = $request['p']['longitud'];
-            $latitud = $request['p']['latitud'];
-            $respuestas = $request['p']['respuestas'];
-            $fecha_hora = $request['p']['fecha_hora'];
-            json_encode($respuestas, true);
+            $id_encuesta = $request->p['id_encuesta_im'];
+            $ean = $request->p['ean'];
+            $ruta_foto = $request->p['ruta_foto'];
+            $longitud = $request->p['longitud'];
+            $latitud = $request->p['latitud'];
+            $respuestas = $request->p['respuestas'];
+            $fecha_hora = $request->p['fecha_hora'];
+            // json_encode($respuestas, true);
 
             $encuesta_im_respuesta = new Encuesta_im_respuesta();
             $encuesta_im_respuesta->id_encuesta_im = $id_encuesta;
@@ -181,7 +181,7 @@ class EncuestaController extends Controller
             on t1.id = t2.id
             set t1.orden = t2.ranking
             ');
-            return response()->json("Operacion realizada correctamente");
+            return response()->json("La operacion se realizo exitosamente");
         }
     }
     public function guardarFoto(Request $request)
